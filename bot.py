@@ -2,15 +2,26 @@ import time
 import json
 import requests
 import sqlite3
+import os
 
 # ------------ Load Config ------------ 
 with open('config.json') as f:
     config = json.load(f)
 
-GITHUB_TOKEN = config['github_token']
-DISCORD_WEBHOOK = config['discord_webhook']
-PROJECT_ID = config['project_id']
-POLL_INTERVAL = config.get('poll_interval', 60)  # Default: 60 seconds
+# Try to load from environment variables first
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+DISCORD_WEBHOOK = os.getenv('DISCORD_WEBHOOK')
+PROJECT_ID = os.getenv('PROJECT_ID')
+POLL_INTERVAL = int(os.getenv('POLL_INTERVAL', 100))
+
+# If running locally, fallback to config.json
+if not GITHUB_TOKEN or not DISCORD_WEBHOOK or not PROJECT_ID:
+    with open('config.json') as f:
+        config = json.load(f)
+    GITHUB_TOKEN = config['github_token']
+    DISCORD_WEBHOOK = config['discord_webhook']
+    PROJECT_ID = config['project_id']
+    POLL_INTERVAL = config.get('poll_interval', 60)
 
 headers = {
     'Authorization': f'Bearer {GITHUB_TOKEN}',
