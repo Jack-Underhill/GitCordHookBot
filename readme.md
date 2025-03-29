@@ -1,13 +1,15 @@
-# GitHub → Discord Project Board Bot
+# 🗂️ GitHub → Discord Project Board Bot
 
-A simple Python bot that monitors a GitHub Project Board and notifies a Discord channel when a card is moved to a different column.
+A simple Python bot that monitors a **GitHub Projects v2 Kanban Board** and sends notifications to a **Discord channel** when cards (project items) are created, moved, or deleted.
 
 ---
 
 ## ⭐ Features
-- Polls GitHub Project Board every X seconds
-- Detects card movement between columns
-- Sends message to Discord via Webhook
+- Monitors your GitHub Projects v2 board every X seconds
+- Detects card movement between columns (status changes)
+- Detects new card creation
+- Detects card deletion
+- Sends formatted notifications to a Discord channel via Webhook
 - Uses SQLite to persist card state across restarts
 
 ---
@@ -16,61 +18,33 @@ A simple Python bot that monitors a GitHub Project Board and notifies a Discord 
 
 ### 1. Create a Discord Webhook
 - Go to your Discord server → Channel Settings → Integrations → Webhooks → **New Webhook**
-- Name it and copy the **Webhook URL**
+- Copy the **Webhook URL**
+
+---
 
 ### 2. Generate a GitHub Personal Access Token
-- Go to: https://github.com/settings/tokens → **Generate a classic token**
-- Recommended scopes:
-  - `repo` (if private repo)
-  - `read:org`
+- Go to: https://github.com/settings/tokens → **Generate a Fine-grained Token**
+- Required scopes:
   - `read:project`
+  - `read:org` *(if the project is under an organization)*
+  - `repo` *(only if monitoring private repositories)*
 
-### 3. Get your Project Board ID
-- Use GitHub's API or inspect your project board URL
-- Example URL: `https://github.com/orgs/YOURORG/projects/123` → Project ID is **123**
+---
 
-### 4. Configure `config.json`
-Create a `config.json` file in the same directory as `bot.py`:
-```json
-{
-  "github_token": "YOUR_GITHUB_TOKEN",
-  "discord_webhook": "YOUR_DISCORD_WEBHOOK_URL",
-  "project_id": "YOUR_PROJECT_ID",
-  "poll_interval": 60
+### 3. Get your GitHub Project Node ID
+GitHub Projects v2 requires a **GraphQL Node ID**, not a numeric ID.
+
+**How to get it:**
+1. Go to the [GitHub GraphQL Explorer](https://docs.github.com/en/graphql/overview/explorer)
+2. Run this query to list your Projects:
+```graphql
+query {
+  viewer {
+    projectsV2(first: 10) {
+      nodes {
+        id
+        title
+      }
+    }
+  }
 }
-```
-
-### 5. Install Dependencies
-```
-pip install requests
-```
-
-### 6. Run the Bot
-```
-python bot.py
-```
-The bot will now monitor your board and post a Discord message when a card changes columns.
-
----
-
-## 🗂️ File Structure
-```
-📂 github_discord_bot_template
-├── bot.py           # Main bot script
-├── config.json      # Your configuration
-├── card_state.db    # SQLite database (auto-created)
-└── README.md        # This file
-```
-
----
-
-## ⚙️ Optional Improvements
-- Add command-line options for project selection
-- Add Issue creation/closure automation
-- Track multiple boards simultaneously
-- Add advanced filtering rules
-
----
-
-## 🧩 License
-This is an open template you can modify for personal and team use.
