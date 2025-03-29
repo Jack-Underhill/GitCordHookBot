@@ -1,0 +1,9 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# SQLite database
+card_state.db
+
+# Config (contains secrets)
+config.json
