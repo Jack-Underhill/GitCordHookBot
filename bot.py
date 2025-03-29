@@ -5,9 +5,6 @@ import sqlite3
 import os
 
 # ------------ Load Config ------------ 
-with open('config.json') as f:
-    config = json.load(f)
-
 # Try to load from environment variables first
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 DISCORD_WEBHOOK = os.getenv('DISCORD_WEBHOOK')
